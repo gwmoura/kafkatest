@@ -4,34 +4,30 @@ include_once './init.php';
 include_once './topics.php';
 
 function sendKafkaMessage($topic, $message) {
-    // $config = setup_kafka_producer();
-    // $logger = start_logger();
+    $config = setup_kafka_producer();
+    $logger = start_logger();
 
-    // $producer = new \Kafka\Producer(
-    //     function() use ($topic, $message) {
-    //         $key = time();
-    //         return [
-    //             [
-    //                 'topic' => $topic,
-    //                 'value' => $message,
-    //                 'key' => $key,
-    //             ],
-    //         ];
-    //     }
-    // );
+    $producer = new \Kafka\Producer(
+        function() use ($topic, $message) {
+            $key = time();
+            return [
+                [
+                    'topic' => $topic,
+                    'value' => $message,
+                    'key' => $key,
+                ],
+            ];
+        }
+    );
 
-    // $producer->setLogger($logger);
-    // $producer->success(function($result) {
-    //     var_dump($result);
-    // });
-    // $producer->error(function($errorCode) {
-    //     var_dump('Error: ' . $errorCode);
-    // });
-    // $producer->send(true);
-    $producer = new \Kafka_Producer('localhost', 9092, Kafka_Encoder::COMPRESSION_NONE);
-    $messages = [$message];
-    $bytes = $producer->send($messages, $topic);
-    return $bytes;
+    $producer->setLogger($logger);
+    $producer->success(function($result) {
+        var_dump($result);
+    });
+    $producer->error(function($errorCode) {
+        var_dump('Error: ' . $errorCode);
+    });
+    $producer->send(true);
 }
 
 function sendSyncKafkaMessage($topic, $message) {

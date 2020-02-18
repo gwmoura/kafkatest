@@ -19,6 +19,7 @@ function setup_kafka_consumer($topics) {
     $config->setGroupId('test');
     $config->setBrokerVersion('1.0.0');
     $config->setTopics($topics);
+    $config->setOffsetReset('earliest');
     // $config->setOffsetReset('earliest');
     return $config;
 }

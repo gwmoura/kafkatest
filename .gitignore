@@ -1,2 +1,4 @@
 vendor
 tmp
+kafka*.tgz
+kafka_*
