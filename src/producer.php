@@ -5,12 +5,12 @@ include_once './init.php';
 require_once './topics.php';
 require_once './functions.php';
 
-function saveData($data) {
+function saveData($logger, $data) {
     $message = json_encode($data);
-    sendKafkaMessage(INTEGRACAO_SALVAR_DADOS, $message);
+    sendKafkaMessage($logger, INTEGRACAO_SALVAR_DADOS, $message);
 }
 
-function newOrder() {
+function newOrder($logger) {
     $amount = (rand() + 1) / 10;
     $order = [
         'id' => uniqid(),
@@ -21,8 +21,8 @@ function newOrder() {
         ]
     ];
 
-    sendKafkaMessage(INTEGRACAO_REGISTRAR_PAGAMENTO, json_encode($order));
-    sendKafkaMessage(INTEGRACAO_EMPRESA_ATUALIZAR_DADOS, json_encode($order['company']));
+    sendKafkaMessage($logger, INTEGRACAO_REGISTRAR_PAGAMENTO, json_encode($order));
+    sendKafkaMessage($logger, INTEGRACAO_EMPRESA_ATUALIZAR_DADOS, json_encode($order['company']));
 }
 
 for ($i = 0; $i < 10; $i++) {
@@ -31,6 +31,6 @@ for ($i = 0; $i < 10; $i++) {
         'name' => "Name $i",
         'regitered_at' => date('Y-m-d H:i:s')
     ];
-    saveData($data);
-    newOrder();
+    saveData($logger, $data);
+    newOrder($logger);
 }

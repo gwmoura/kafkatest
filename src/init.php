@@ -5,9 +5,9 @@ use Monolog\Handler\StreamHandler;
 
 function start_logger() {
     // Create the logger
-    $logger = new Logger('my_logger');
+    $logger = new Logger('carteiro_app');
     // Now add some handlers
-    $logger->pushHandler(new StreamHandler('php://stdout', Logger::WARNING));
+    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 
     return $logger;
 }
@@ -35,3 +35,5 @@ function setup_kafka_producer() {
 
     return $config;
 }
+
+$logger = start_logger();

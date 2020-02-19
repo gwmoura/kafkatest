@@ -3,9 +3,8 @@
 include_once './init.php';
 include_once './topics.php';
 
-function sendKafkaMessage($topic, $message) {
+function sendKafkaMessage($logger, $topic, $message) {
     $config = setup_kafka_producer();
-    $logger = start_logger();
 
     $producer = new \Kafka\Producer(
         function() use ($topic, $message) {
@@ -21,58 +20,36 @@ function sendKafkaMessage($topic, $message) {
     );
 
     $producer->setLogger($logger);
-    $producer->success(function($result) {
-        var_dump($result);
+    $producer->success(function($result) use ($logger) {
+        // var_dump($result);
+        $logger->info('success', $result);
     });
-    $producer->error(function($errorCode) {
-        var_dump('Error: ' . $errorCode);
+
+    $producer->error(function($errorCode) use ($logger) {
+        // var_dump('Error: ' . $errorCode);
+        $logger->error('Error: ', $errorCode);
     });
+
     $producer->send(true);
 }
 
-function sendSyncKafkaMessage($topic, $message) {
-    $config = setup_kafka_producer();
-    $producer = new \Kafka\Producer();
-    $logger = start_logger();
-    $key = time();
-
-    $producer->setLogger($logger);
-
-    $msg = [
-        'topic' => $topic,
-        'value' => $message,
-        'key' => $key,
-    ];
-
-    print_r($msg);
-    $producer->send([$msg]);
+function integracao_salvar_dados(\Monolog\Logger $logger, $payload) {
+    $logger->info("--------------- integracao_salvar_dados ------------------------");
+    $logger->info($payload['value']);
+    sleep(1);
 }
 
-function integracao_salvar_dados($payload) {
-    echo "--------------- integracao_salvar_dados ------------------------\n";
-    print_r($payload['value']);
-    echo "\n";
+function integracao_registrar_pagamento(\Monolog\Logger $logger, $payload) {
+    $logger->info("--------------- integracao_registrar_pagamento ------------------------");
+    $logger->info($payload['value']);
 }
 
-function integracao_registrar_pagamento($payload) {
-    echo "--------------- integracao_registrar_pagamento ------------------------\n";
-    print_r($payload['value']);
-    echo "\n";
-}
-
-function integracao_empresa_atualizar_dados($payload) {
-    echo "--------------- integracao_empresa_atualizar_dados ------------------------\n";
-    $result = rand(0,1);
-    if ($result == 0) {
-        throw new Exception('Ops! Error to update data');
-    }
-    print_r($payload['value']);
-
-    echo "\n";
-}
-
-function integracao_empresa_atualizar_dados_failure($payload) {
-    echo "--------------- integracao_empresa_atualizar_dados_failure ------------------------\n";
-    integracao_empresa_atualizar_dados($payload);
-    echo "\n";
+function integracao_empresa_atualizar_dados(\Monolog\Logger $logger, $payload) {
+    $logger->info("--------------- integracao_empresa_atualizar_dados ------------------------");
+    // $result = rand(0,1);
+    // if ($result == 0) {
+    // throw new Exception('Ops! Error to update data');
+    // }
+    sleep(3);
+    $logger->info($payload['value']);
 }
