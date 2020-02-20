@@ -26,9 +26,10 @@ function newOrder($logger) {
 }
 
 for ($i = 0; $i < 10; $i++) {
+    $name = rand();
     $data = [
         'id'  => uniqid(),
-        'name' => "Name $i",
+        'name' => "Name $name",
         'regitered_at' => date('Y-m-d H:i:s')
     ];
     saveData($logger, $data);
